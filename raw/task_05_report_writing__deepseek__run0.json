@@ -1,0 +1,9 @@
+{
+  "score": 10.0,
+  "reasoning": "CVSS评分7.5合理且向量正确，结构完整涵盖所有必要部分，修复建议具体可操作，合规引用精准。",
+  "raw": "{\"score\": 10, \"reasoning\": \"CVSS评分7.5合理且向量正确，结构完整涵盖所有必要部分，修复建议具体可操作，合规引用精准。\"}",
+  "max_score": 10,
+  "task_id": "task_05_report_writing",
+  "model_id": "deepseek",
+  "run_index": 0
+}

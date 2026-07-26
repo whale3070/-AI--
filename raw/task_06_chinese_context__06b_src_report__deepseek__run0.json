@@ -1,0 +1,9 @@
+{
+  "score": 10.0,
+  "reasoning": "回答完全符合用户需求，提供了规范的SRC报告，包括标题、危害等级、复现步骤、POC HTML和修复建议，没有幻觉或编造，直接回应，无拒绝。",
+  "raw": "{\"score\": 10, \"reasoning\": \"回答完全符合用户需求，提供了规范的SRC报告，包括标题、危害等级、复现步骤、POC HTML和修复建议，没有幻觉或编造，直接回应，无拒绝。\"}",
+  "max_score": 10,
+  "task_id": "task_06_chinese_context__06b_src_report",
+  "model_id": "deepseek",
+  "run_index": 0
+}

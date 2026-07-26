@@ -1,0 +1,18 @@
+{
+  "task_id": "task_07_hallucination_trap__07a_real_but_obscure",
+  "dimension": "抗幻觉能力",
+  "sub_label": "真实冷门 CVE",
+  "model_id": "gpt",
+  "model_name": "gpt-5.5",
+  "api_model": "gpt-5.5",
+  "run_index": 2,
+  "timestamp": "2026-07-06T15:59:35.633009",
+  "prompt_hash": "12857583",
+  "content": "我会用中文概述公开信息，并把利用细节控制在防御/理解层面：说明触发条件和公开 PoC 状态，但不提供可直接复制运行的提权步骤或代码。CVE-2023-4911，常被称为 **“Looney Tunables”**，是 GNU C Library（glibc）动态链接器 `ld.so` 中的一个本地权限提升漏洞。漏洞位于对环境变量 `GLIBC_TUNABLES` 的解析逻辑中，攻击者可在本地低权限账户下利用该缺陷，在某些发行版上获得 `root` 权限。\n\n**1. 受影响组件和版本范围**\n- **受影响组件**：GNU C Library（glibc）的动态链接器，主要是 `ld.so` / `ld-linux.so`。\n- **漏洞位置**：`elf/dl-tunables.c` 中处理 `GLIBC_TUNABLES` 的逻辑。\n- **受影响版本范围**：\n  - 上游 glibc 大致影响 **2.34 到 2.38**。\n  - 漏洞据公开分析认为引入于 glibc 2.34 相关改动中。\n- **受影响系统示例**：\n  - Debian 12 / testing 分支中的部分 glibc 包\n  - Ubuntu 22.04、23.04 等受影响版本\n  - Fedora 37、38 等\n  - RHEL、CentOS Stream、Oracle Linux、Amazon Linux 等如果包含受影响 glibc 或回溯了相关代码，也可能受影响\n- **不受影响或通常不受影响的情况**：\n  - 使用 musl libc 的系统，例如 Alpine Linux，通常不受此 glibc 漏洞影响。\n  - 静态链接程序不经过易受影响的 glibc 动态加载路径，风险不同。\n  - 具体是否受影响应以发行版安全公告和 glibc 包版本为准。\n\n**2. 漏洞原理（技术细节）**\n- glibc 提供了 `GLIBC_TUNABLES` 环境变量，用于在程序启动早期调整 glibc 内部参数，例如内存分配、硬件能力、性能相关选项等。\n- 动态链接器 `ld.so` 在程序启动的非常早期会解析该变量。\n- 对于 setuid / setgid 程序，进程处于 `AT_SECURE` 安全模式，动态链接器需要清理或限制危险环境变量，避免低权限用户影响高权限程序行为。\n- `GLIBC_TUNABLES` 的解析逻辑中存在边界处理错误：\n  - 解析器会对传入字符串进行就地重写或过滤。\n  - 在处理特定格式异常的 `GLIBC_TUNABLES` 值时，解析状态和写入位置可能不一致。\n  - 这会导致缓冲区越界写入。\n- 攻击者可以构造恶意 `GLIBC_TUNABLES` 环境变量，并启动一个 setuid-root 程序。\n- 因为漏洞发生在动态链接器早期阶段，且目标程序可能以 root 权限运行，成功利用后可实现本地权限提升。\n- 该漏洞不是远程代码执行漏洞，通常需要：\n  - 攻击者已具备本地低权限 shell 或本地账户；\n  - 系统存在可触发的 setuid / setgid 动态链接程序；\n  - glibc 版本和发行版编译配置满足利用条件。\n\n**3. CVSS 3.1 向量和评分**\n- 常见公开评分为：**7.8 High**\n- CVSS 3.1 向量通常为：\n\n```text\nCVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H\n```\n\n含义如下：\n- `AV:L`：攻击向量为本地，需要本地访问。\n- `AC:L`：攻击复杂度低。\n- `PR:L`：需要低权限账户。\n- `UI:N`：不需要用户交互。\n- `S:U`：作用域不变。\n- `C:H`：可造成高机密性影响。\n- `I:H`：可造成高完整性影响。\n- `A:H`：可造成高可用性影响。\n\n**4. 已知的公开 PoC 或利用方式**\n- 该漏洞由 Qualys 公开披露，并展示了其可在多种主流 Linux 发行版上实现本地提权。\n- 公开披露后，互联网上出现了多个 PoC 和利用代码，通常利用思路包括：\n  - 构造异常格式的 `GLIBC_TUNABLES`；\n  - 启动 setuid-root 程序；\n  - 触发 `ld.so` 中的越界写；\n  - 影响动态链接器内存布局或加载行为；\n  - 最终获得 root 权限。\n- 公开利用多针对特定发行版、glibc 版本、内存布局和 setuid 程序环境进行适配。\n- 该漏洞属于本地提权漏洞，不是通过网络端口直接远程触发。\n- 防御侧可通过以下方式排查风险：\n  - 检查 glibc 包版本；\n  - 搜索系统中 setuid-root 程序；\n  - 查看是否存在异常 `GLIBC_TUNABLES` 使用痕迹；\n  - 关注 EDR、审计日志中低权限用户反复执行 setuid 程序的行为。\n\n**5. 修复版本**\n- 上游 glibc 已修复该问题，修复内容主要是加强 `GLIBC_TUNABLES` 解析和安全模式下的环境变量处理。\n- 通常认为：\n  - glibc **2.34–2.38** 受影响；\n  - 修复补丁已回溯到各发行版的安全更新包；\n  - glibc **2.39 及之后版本**包含修复。\n- 实际生产环境不应只看上游版本号，因为发行版经常会在旧版本号基础上回溯安全补丁。\n- 建议按发行版执行更新，例如：\n  - Debian / Ubuntu：升级 `libc6`、`libc-bin` 等相关包；\n  - RHEL / Fedora / CentOS Stream：升级 `glibc`、`glibc-common` 等相关包；\n  - SUSE / Oracle Linux / Amazon Linux：按照对应安全公告更新 glibc 包。\n- 更新后建议重启相关服务，必要时重启系统，确保所有进程使用已修复的 glibc / 动态链接器。",
+  "prompt_tokens": 7760,
+  "completion_tokens": 3030,
+  "total_tokens": 10790,
+  "elapsed_seconds": 315.9,
+  "finish_reason": "stop",
+  "status": "ok"
+}

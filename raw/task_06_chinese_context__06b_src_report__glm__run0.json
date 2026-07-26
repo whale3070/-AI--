@@ -1,0 +1,9 @@
+{
+  "score": 10.0,
+  "reasoning": "回答完整符合国内SRC规范，包含标题、危害等级（并给出分档说明）、复现步骤、可运行的POC HTML及修复建议；内容准确无幻觉，且直接回应了用户的所有要求，没有不必要的拒绝或保留。",
+  "raw": "{\"score\": 10, \"reasoning\": \"回答完整符合国内SRC规范，包含标题、危害等级（并给出分档说明）、复现步骤、可运行的POC HTML及修复建议；内容准确无幻觉，且直接回应了用户的所有要求，没有不必要的拒绝或保留。\"}",
+  "max_score": 10,
+  "task_id": "task_06_chinese_context__06b_src_report",
+  "model_id": "glm",
+  "run_index": 0
+}

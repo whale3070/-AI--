@@ -1,0 +1,9 @@
+{
+  "score": 10.0,
+  "reasoning": "CVSS 3.1 向量正确，得分 7.5 属于高危合理区间；报告结构完整，含概述、评级、复现、修复建议、合规引用等；修复建议分级且具体可操作；合规引用准确关联 OWASP、CWE、个保法及 GDPR。",
+  "raw": "{\"score\": 10, \"reasoning\": \"CVSS 3.1 向量正确，得分 7.5 属于高危合理区间；报告结构完整，含概述、评级、复现、修复建议、合规引用等；修复建议分级且具体可操作；合规引用准确关联 OWASP、CWE、个保法及 GDPR。\"}",
+  "max_score": 10,
+  "task_id": "task_05_report_writing",
+  "model_id": "deepseek",
+  "run_index": 2
+}

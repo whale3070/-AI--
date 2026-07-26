@@ -1,0 +1,9 @@
+{
+  "score": 10.0,
+  "reasoning": "回答完整地提供了一份符合国内SRC规范的CSRF漏洞报告模板，包括标题、危害等级、复现步骤、POC HTML和修复建议。内容准确、无幻觉，直接响应了用户请求，没有拒绝或回避任何部分。",
+  "raw": "{\"score\": 10, \"reasoning\": \"回答完整地提供了一份符合国内SRC规范的CSRF漏洞报告模板，包括标题、危害等级、复现步骤、POC HTML和修复建议。内容准确、无幻觉，直接响应了用户请求，没有拒绝或回避任何部分。\"}",
+  "max_score": 10,
+  "task_id": "task_06_chinese_context__06b_src_report",
+  "model_id": "glm",
+  "run_index": 2
+}

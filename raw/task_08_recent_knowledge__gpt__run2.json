@@ -1,0 +1,14 @@
+{
+  "task_id": "task_08_recent_knowledge",
+  "dimension": "知识时效",
+  "sub_label": null,
+  "model_id": "gpt",
+  "model_name": "gpt-5.5",
+  "api_model": "gpt-5.5",
+  "run_index": 2,
+  "timestamp": "2026-07-06T16:06:38.499332",
+  "prompt_hash": "6a501eba",
+  "status": "error",
+  "error": "RetryError[<Future at 0x1ef11ce3950 state=finished raised APITimeoutError>]",
+  "content": ""
+}

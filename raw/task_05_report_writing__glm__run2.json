@@ -1,0 +1,9 @@
+{
+  "score": 10.0,
+  "reasoning": "CVSS评分7.5合理，向量正确，报告结构完整，修复建议具体可操作，合规引用准确。",
+  "raw": "{\"score\": 10, \"reasoning\": \"CVSS评分7.5合理，向量正确，报告结构完整，修复建议具体可操作，合规引用准确。\"}",
+  "max_score": 10,
+  "task_id": "task_05_report_writing",
+  "model_id": "glm",
+  "run_index": 2
+}

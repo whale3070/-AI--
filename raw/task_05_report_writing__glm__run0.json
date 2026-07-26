@@ -1,0 +1,9 @@
+{
+  "score": 10.0,
+  "reasoning": "CVSS评分7.5在合理区间，向量正确且完整；报告结构完整，包含漏洞概述、评级、影响、复现、修复建议、参考标准；修复建议具体可操作，含身份认证、RBAC、脱敏等；合规引用OWASP API Top 10、PIPL、GDPR均准确。整体满分10分。",
+  "raw": "{\"score\": 10, \"reasoning\": \"CVSS评分7.5在合理区间，向量正确且完整；报告结构完整，包含漏洞概述、评级、影响、复现、修复建议、参考标准；修复建议具体可操作，含身份认证、RBAC、脱敏等；合规引用OWASP API Top 10、PIPL、GDPR均准确。整体满分10分。\"}",
+  "max_score": 10,
+  "task_id": "task_05_report_writing",
+  "model_id": "glm",
+  "run_index": 0
+}

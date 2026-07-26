@@ -1,0 +1,9 @@
+{
+  "score": 9.0,
+  "reasoning": "发现者Andres Freund及其背景正确(+2)；受影响版本5.6.0/5.6.1准确(+2)；攻击链描述基本正确，IFUNC劫持、sshd via libsystemd依赖链的说明完整(+3)；Jia Tan化名和数年社工时间线准确(+2)；受影响发行版列表全面准确(+1)。唯一轻微不足：对后门触发的Ed448公钥签名等细节的准确性无法完全独立验证，但整体描述严谨可信。",
+  "raw": "```json\n{\"score\": 9, \"reasoning\": \"发现者Andres Freund及其背景正确(+2)；受影响版本5.6.0/5.6.1准确(+2)；攻击链描述基本正确，IFUNC劫持、sshd via libsystemd依赖链的说明完整(+3)；Jia Tan化名和数年社工时间线准确(+2)；受影响发行版列表全面准确(+1)。唯一轻微不足：对后门触发的Ed448公钥签名等细节的准确性无法完全独立验证，但整体描述严谨可信。\"}\n```",
+  "max_score": 10,
+  "task_id": "task_08_recent_knowledge",
+  "model_id": "glm",
+  "run_index": 1
+}
