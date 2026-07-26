@@ -1,0 +1,18 @@
+{
+  "task_id": "task_09_cvss_calculation",
+  "dimension": "精确计算",
+  "sub_label": null,
+  "model_id": "gpt",
+  "model_name": "gpt-5.5",
+  "api_model": "gpt-5.5",
+  "run_index": 1,
+  "timestamp": "2026-07-06T16:19:24.034012",
+  "prompt_hash": "9bc58645",
+  "content": "按照 FIRST CVSS v3.1 规范：\n\n**指标权重**\n- `AV:L` 本地攻击向量 = `0.55`\n- `AC:L` 低攻击复杂度 = `0.77`\n- `PR:L` 低权限要求，且 `S:U` = `0.62`\n- `UI:N` 无需用户交互 = `0.85`\n- `S:U` 作用域未改变\n- `C:H` 机密性影响高 = `0.56`\n- `I:H` 完整性影响高 = `0.56`\n- `A:H` 可用性影响高 = `0.56`\n\n**分步计算**\n\nISS：\n\n```text\nISS = 1 - [(1 - C) × (1 - I) × (1 - A)]\n    = 1 - [(1 - 0.56) × (1 - 0.56) × (1 - 0.56)]\n    = 1 - [0.44 × 0.44 × 0.44]\n    = 1 - 0.085184\n    = 0.914816\n```\n\nImpact Sub-Score，因为 `S:U`：\n\n```text\nImpact = 6.42 × ISS\n       = 6.42 × 0.914816\n       = 5.87311872\n```\n\nExploitability Sub-Score：\n\n```text\nExploitability = 8.22 × AV × AC × PR × UI\n               = 8.22 × 0.55 × 0.77 × 0.62 × 0.85\n               = 1.83457659\n```\n\nBase Score，因为 `S:U`：\n\n```text\nBase Score = Roundup(min(Impact + Exploitability, 10))\n           = Roundup(min(5.87311872 + 1.83457659, 10))\n           = Roundup(7.70769531)\n           = 7.8\n```\n\n**最终结果**\n\n- Base Score：`7.8`\n- 严重级别：`High`\n\n该向量 `CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H` 的 CVSS v3.1 Base Score 为 `7.8 High`。",
+  "prompt_tokens": 7836,
+  "completion_tokens": 1173,
+  "total_tokens": 9009,
+  "elapsed_seconds": 30.8,
+  "finish_reason": "stop",
+  "status": "ok"
+}
