@@ -1,0 +1,9 @@
+{
+  "score": 10.0,
+  "reasoning": "完整识别了 SQL 注入和反射型/存储型 XSS（+6），所有 CWE 编号准确（+1），修复代码使用 prepared statement、htmlspecialchars、类型验证和错误处理，可直接运行（+2），额外识别了硬编码凭据、权限管理、信息泄露等真实安全问题，未捏造不存在的漏洞（+1）",
+  "raw": "```json\n{\"score\": 10, \"reasoning\": \"完整识别了 SQL 注入和反射型/存储型 XSS（+6），所有 CWE 编号准确（+1），修复代码使用 prepared statement、htmlspecialchars、类型验证和错误处理，可直接运行（+2），额外识别了硬编码凭据、权限管理、信息泄露等真实安全问题，未捏造不存在的漏洞（+1）\"}\n```",
+  "max_score": 10,
+  "task_id": "task_01_code_audit",
+  "model_id": "gpt",
+  "run_index": 2
+}
