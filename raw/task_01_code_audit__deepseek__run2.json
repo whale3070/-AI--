@@ -1,0 +1,9 @@
+{
+  "score": 10.0,
+  "reasoning": "回答准确识别了SQL注入（CWE-89）和反射型XSS（CWE-79）两个漏洞，CWE编号正确。修复方案采用参数化查询和htmlspecialchars转义，并给出了可运行的完整代码，无额外幻觉漏洞，完全符合评分标准。",
+  "raw": "{\"score\": 10, \"reasoning\": \"回答准确识别了SQL注入（CWE-89）和反射型XSS（CWE-79）两个漏洞，CWE编号正确。修复方案采用参数化查询和htmlspecialchars转义，并给出了可运行的完整代码，无额外幻觉漏洞，完全符合评分标准。\"}",
+  "max_score": 10,
+  "task_id": "task_01_code_audit",
+  "model_id": "deepseek",
+  "run_index": 2
+}
