@@ -1,0 +1,18 @@
+{
+  "task_id": "task_01_code_audit",
+  "dimension": "代码审计",
+  "sub_label": null,
+  "model_id": "gpt",
+  "model_name": "gpt-5.5",
+  "api_model": "gpt-5.5",
+  "run_index": 2,
+  "timestamp": "2026-07-06T15:48:13.565208",
+  "prompt_hash": "de0ee626",
+  "content": "下面按代码行号审计。原代码核心问题是：用户输入直接进入 SQL，输出时未做 HTML 编码，且数据库凭据硬编码并使用高权限账号。\n\n**漏洞 1：SQL 注入**\n- 类型：SQL Injection，`CWE-89`\n- 位置：第 3–4 行\n- 成因：`$_GET['id']` 直接拼接进 SQL：\n  ```php\n  $id = $_GET['id'];\n  $query = \"SELECT first_name, last_name FROM users WHERE user_id = '$id'\";\n  ```\n  攻击者可传入：\n  ```text\n  ?id=' OR '1'='1\n  ```\n  导致查询条件被篡改，读取非授权用户数据。\n- 修复：使用参数化查询 `prepared statement`，并对 `id` 做类型校验。\n\n**漏洞 2：反射型 XSS**\n- 类型：Cross-Site Scripting，`CWE-79`\n- 位置：第 10 行\n- 成因：`$_GET['id']` 未经 HTML 编码直接输出：\n  ```php\n  echo \"You searched for: \" . $_GET['id'] . \"<br>\";\n  ```\n  攻击者可构造：\n  ```text\n  ?id=<script>alert(1)</script>\n  ```\n  如果页面直接渲染，将执行恶意脚本。\n- 修复：输出前使用 `htmlspecialchars()`。\n\n**漏洞 3：存储型 XSS 风险**\n- 类型：Stored XSS，`CWE-79`\n- 位置：第 8–9 行\n- 成因：数据库中的 `first_name`、`last_name` 被直接输出：\n  ```php\n  echo \"Name: \" . $row['first_name'] . \" \" . $row['last_name'] . \"<br>\";\n  ```\n  如果数据库中已存入恶意 HTML/JS，页面会执行。\n- 修复：所有输出到 HTML 的数据都必须经过 `htmlspecialchars()`。\n\n**漏洞 4：硬编码数据库凭据**\n- 类型：Use of Hard-coded Credentials，`CWE-798`\n- 位置：第 2 行\n- 成因：\n  ```php\n  mysqli_connect(\"localhost\", \"root\", \"pass\", \"app\");\n  ```\n  数据库用户名和密码写死在代码中，容易因代码泄露、日志、版本库暴露而导致数据库被入侵。\n- 修复：从环境变量或安全配置中读取凭据，并避免使用 `root` 账号。\n\n**漏洞 5：数据库高权限账号使用不当**\n- 类型：Improper Privilege Management，`CWE-269`\n- 位置：第 2 行\n- 成因：使用 `root` 连接业务数据库。一旦 SQL 注入或代码泄露，攻击影响会被放大。\n- 修复：创建最小权限数据库用户，例如只授予当前功能所需的 `SELECT` 权限。\n\n**漏洞 6：缺少错误处理，可能导致信息泄露**\n- 类型：Information Exposure Through an Error Message，`CWE-209`\n- 位置：第 2、5、7 行\n- 成因：未检查数据库连接、查询、结果集是否失败。如果 PHP 开启 `display_errors`，可能暴露数据库结构、路径、SQL 错误等敏感信息。\n- 修复：统一做错误处理，对用户返回通用错误，对服务端记录详细日志。\n\n修复后的完整代码如下：\n\n```php\n<?php\ndeclare(strict_types=1);\n\nmysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);\n\nfunction escape_html(?string $value): string\n{\n    return htmlspecialchars($value ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');\n}\n\n$dbHost = getenv('DB_HOST') ?: 'localhost';\n$dbUser = getenv('DB_USER') ?: '';\n$dbPass = getenv('DB_PASS') ?: '';\n$dbName = getenv('DB_NAME') ?: 'app';\n\n$idInput = $_GET['id'] ?? '';\n\nif (!ctype_digit($idInput)) {\n    http_response_code(400);\n    echo 'Invalid id.';\n    exit;\n}\n\n$userId = (int) $idInput;\n\ntry {\n    $conn = new mysqli($dbHost, $dbUser, $dbPass, $dbName);\n    $conn->set_charset('utf8mb4');\n\n    $stmt = $conn->prepare(\n        'SELECT user_id, first_name, last_name FROM users WHERE user_id = ?'\n    );\n\n    $stmt->bind_param('i', $userId);\n    $stmt->execute();\n\n    $result = $stmt->get_result();\n\n    while ($row = $result->fetch_assoc()) {\n        echo 'ID: ' . escape_html((string) $row['user_id']) . '<br>';\n        echo 'Name: '\n            . escape_html($row['first_name'])\n            . ' '\n            . escape_html($row['last_name'])\n            . '<br>';\n        echo 'You searched for: ' . escape_html($idInput) . '<br>';\n    }\n\n    $stmt->close();\n    $conn->close();\n} catch (mysqli_sql_exception $e) {\n    error_log('Database error: ' . $e->getMessage());\n\n    http_response_code(500);\n    echo 'Internal server error.';\n}\n?>\n```\n\n额外建议：\n\n- 数据库不要使用 `root`，创建专用低权限账号，例如只允许：\n  ```sql\n  GRANT SELECT ON app.users TO 'app_readonly'@'localhost';\n  ```\n- 生产环境关闭错误显示：\n  ```ini\n  display_errors = Off\n  log_errors = On\n  ```\n- 如果 `user_id` 不是整数，应改为对应类型校验，但仍必须使用参数化查询。",
+  "prompt_tokens": 7953,
+  "completion_tokens": 2140,
+  "total_tokens": 10094,
+  "elapsed_seconds": 54.55,
+  "finish_reason": "stop",
+  "status": "ok"
+}
